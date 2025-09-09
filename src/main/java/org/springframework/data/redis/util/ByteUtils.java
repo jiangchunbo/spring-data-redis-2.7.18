@@ -148,10 +148,17 @@ public final class ByteUtils {
 	 */
 	public static byte[] getBytes(ByteBuffer byteBuffer) {
 
+        // >>> 从 byteBuffer 读取 byte[]，但是不想触及其中的游标属性
+
 		Assert.notNull(byteBuffer, "ByteBuffer must not be null!");
 
+        // 复制一份 ByteBuffer，底层数据共享，游标独立
 		ByteBuffer duplicate = byteBuffer.duplicate();
+
+        // 计算有多少可以读取的数据，创建 byte[]
 		byte[] bytes = new byte[duplicate.remaining()];
+
+        // 将 bytes 读取到 byte[] 中
 		duplicate.get(bytes);
 		return bytes;
 	}

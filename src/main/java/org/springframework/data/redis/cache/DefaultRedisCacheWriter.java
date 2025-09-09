@@ -124,6 +124,8 @@ class DefaultRedisCacheWriter implements RedisCacheWriter {
 	@Override
 	public byte[] get(String name, byte[] key) {
 
+        // >>> 你可以认为 name 是资源名称吧
+
 		Assert.notNull(name, "Name must not be null!");
 		Assert.notNull(key, "Key must not be null!");
 

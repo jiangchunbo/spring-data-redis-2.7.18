@@ -56,7 +56,11 @@ public class RedisCache extends AbstractValueAdaptingCache {
 	private static final byte[] BINARY_NULL_VALUE = RedisSerializer.java().serialize(NullValue.INSTANCE);
 
 	private final String name;
-	private final RedisCacheWriter cacheWriter;
+
+    /**
+     * 通过这个 Writer 操作 Redis
+     */
+    private final RedisCacheWriter cacheWriter;
 	private final RedisCacheConfiguration cacheConfig;
 	private final ConversionService conversionService;
 
@@ -88,6 +92,7 @@ public class RedisCache extends AbstractValueAdaptingCache {
 	@Override
 	protected Object lookup(Object key) {
 
+        // name 只是用于 lock
 		byte[] value = cacheWriter.get(name, createAndConvertCacheKey(key));
 
 		if (value == null) {
@@ -267,6 +272,9 @@ public class RedisCache extends AbstractValueAdaptingCache {
 	 * @return never {@literal null}.
 	 */
 	protected byte[] serializeCacheKey(String cacheKey) {
+        // write 方法返回的是 ByteBuffer
+        // 然后这里又是返回 byte[]
+
 		return ByteUtils.getBytes(cacheConfig.getKeySerializationPair().write(cacheKey));
 	}
 
@@ -309,12 +317,15 @@ public class RedisCache extends AbstractValueAdaptingCache {
 	 */
 	protected String createCacheKey(Object key) {
 
+        // key 可以是 Object，里面会进行转换
 		String convertedKey = convertKey(key);
 
+        // 如果不用前缀，那么直接返回这个 [纯净] 的 key 即可
 		if (!cacheConfig.usePrefix()) {
 			return convertedKey;
 		}
 
+        // 否则就添加 prefix
 		return prefixCacheKey(convertedKey);
 	}
 
@@ -326,11 +337,14 @@ public class RedisCache extends AbstractValueAdaptingCache {
 	 * @throws IllegalStateException if {@code key} cannot be converted to {@link String}.
 	 */
 	protected String convertKey(Object key) {
+        // 如果 key 本身就是 String，那很好
 
 		if (key instanceof String) {
 			return (String) key;
 		}
 
+        // 如果 key 是其他类型，那么就进行 convert
+        // >>>> 其实一般不会写成其他类型，因为很少用
 		TypeDescriptor source = TypeDescriptor.forObject(key);
 
 		if (conversionService.canConvert(source, TypeDescriptor.valueOf(String.class))) {
@@ -391,6 +405,9 @@ public class RedisCache extends AbstractValueAdaptingCache {
 	}
 
 	private byte[] createAndConvertCacheKey(Object key) {
+        // 将 key 转换为字符串
+        // 然后 序列化
+
 		return serializeCacheKey(createCacheKey(key));
 	}
 

@@ -41,6 +41,8 @@ class DefaultRedisElementWriter<T> implements RedisElementWriter<T> {
 	public ByteBuffer write(T value) {
 
 		if (serializer != null && (value == null || serializer.canSerialize(value.getClass()))) {
+            // 通过 serializer 序列化 value 得到一个 byte[]
+            // 然后包装为 ByteBuffer
 			return ByteBuffer.wrap(serializer.serialize(value));
 		}
 

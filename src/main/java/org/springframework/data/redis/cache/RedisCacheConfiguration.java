@@ -45,9 +45,20 @@ import org.springframework.util.Assert;
  */
 public class RedisCacheConfiguration {
 
+    /**
+     * 缓存过期时间
+     */
 	private final Duration ttl;
-	private final boolean cacheNullValues;
-	private final CacheKeyPrefix keyPrefix;
+
+    /**
+     * 是否缓存 null
+     */
+    private final boolean cacheNullValues;
+
+    /**
+     * key 的前缀
+     */
+    private final CacheKeyPrefix keyPrefix;
 	private final boolean usePrefix;
 
 	private final SerializationPair<String> keySerializationPair;

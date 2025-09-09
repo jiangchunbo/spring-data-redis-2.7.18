@@ -287,6 +287,8 @@ public interface RedisSerializationContext<K, V> {
 
         /**
          * Serialize the given {@code element} to its {@link ByteBuffer} representation.
+         * <p>
+         * 将给定的 element 对象序列化为 ByteBuffer 表现形式
          *
          * @param element {@link Object} to write (serialize) as a stream of bytes.
          * @return the {@link ByteBuffer} representing the given {@code element} in binary form.
@@ -295,6 +297,7 @@ public interface RedisSerializationContext<K, V> {
             // 使用写入器进行写入
             return getWriter().write(element);
         }
+
     }
 
     /**
@@ -491,4 +494,5 @@ public interface RedisSerializationContext<K, V> {
         RedisSerializationContext<K, V> build();
 
     }
+
 }
