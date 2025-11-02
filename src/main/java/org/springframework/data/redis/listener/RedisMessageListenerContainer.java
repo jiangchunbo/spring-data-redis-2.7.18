@@ -107,6 +107,8 @@ import org.springframework.util.backoff.FixedBackOff;
  */
 public class RedisMessageListenerContainer implements InitializingBean, DisposableBean, BeanNameAware, SmartLifecycle {
 
+    // SmartLifecycle 启动时惰性地监听
+
     /**
      * Logger available to subclasses
      */
@@ -167,7 +169,7 @@ public class RedisMessageListenerContainer implements InitializingBean, Disposab
 
     private long maxSubscriptionRegistrationWaitingTime = DEFAULT_SUBSCRIPTION_REGISTRATION_WAIT_TIME;
 
-    private volatile CompletableFuture<Void> listenFuture = new CompletableFuture<>();
+    private volatile CompletableFuture<Void>  listenFuture = new CompletableFuture<>();
 
     private volatile CompletableFuture<Void> unsubscribeFuture = new CompletableFuture<>();
 

@@ -22,6 +22,12 @@ import org.springframework.util.ClassUtils;
  * Basic interface serialization and deserialization of Objects to byte arrays (binary data). It is recommended that
  * implementations are designed to handle null objects/empty arrays on serialization and deserialization side. Note that
  * Redis does not accept null keys or values but can return null replies (for non existing keys).
+ * <p>
+ * 对象序列化和反序列化为字节数组(二进制数据)的基本接口。
+ * <p>
+ * 建议在实现时，设计能够处理序列化和反序列化过程中出现的空对象或空数组。
+ * <p>
+ * 需要注意的时，Redis 不接受空键或空值，但在键不存在时可能会返回空响应。
  *
  * @author Mark Pollack
  * @author Costin Leau
@@ -29,84 +35,85 @@ import org.springframework.util.ClassUtils;
  */
 public interface RedisSerializer<T> {
 
-	/**
-	 * Serialize the given object to binary data.
-	 *
-	 * @param t object to serialize. Can be {@literal null}.
-	 * @return the equivalent binary data. Can be {@literal null}.
-	 */
-	@Nullable
-	byte[] serialize(@Nullable T t) throws SerializationException;
+    /**
+     * Serialize the given object to binary data.
+     *
+     * @param t object to serialize. Can be {@literal null}.
+     * @return the equivalent binary data. Can be {@literal null}.
+     */
+    @Nullable
+    byte[] serialize(@Nullable T t) throws SerializationException;
 
-	/**
-	 * Deserialize an object from the given binary data.
-	 *
-	 * @param bytes object binary representation. Can be {@literal null}.
-	 * @return the equivalent object instance. Can be {@literal null}.
-	 */
-	@Nullable
-	T deserialize(@Nullable byte[] bytes) throws SerializationException;
+    /**
+     * Deserialize an object from the given binary data.
+     *
+     * @param bytes object binary representation. Can be {@literal null}.
+     * @return the equivalent object instance. Can be {@literal null}.
+     */
+    @Nullable
+    T deserialize(@Nullable byte[] bytes) throws SerializationException;
 
-	/**
-	 * Obtain a {@link RedisSerializer} using java serialization.<br />
-	 * <strong>Note:</strong> Ensure that your domain objects are actually {@link java.io.Serializable serializable}.
-	 *
-	 * @return never {@literal null}.
-	 * @since 2.1
-	 */
-	static RedisSerializer<Object> java() {
-		return java(null);
-	}
+    /**
+     * Obtain a {@link RedisSerializer} using java serialization.<br />
+     * <strong>Note:</strong> Ensure that your domain objects are actually {@link java.io.Serializable serializable}.
+     *
+     * @return never {@literal null}.
+     * @since 2.1
+     */
+    static RedisSerializer<Object> java() {
+        return java(null);
+    }
 
-	/**
-	 * Obtain a {@link RedisSerializer} using java serialization with the given {@link ClassLoader}.<br />
-	 * <strong>Note:</strong> Ensure that your domain objects are actually {@link java.io.Serializable serializable}.
-	 *
-	 * @param classLoader the {@link ClassLoader} to use for deserialization. Can be {@literal null}.
-	 * @return new instance of {@link RedisSerializer}. Never {@literal null}.
-	 * @since 2.1
-	 */
-	static RedisSerializer<Object> java(@Nullable ClassLoader classLoader) {
-		return new JdkSerializationRedisSerializer(classLoader);
-	}
+    /**
+     * Obtain a {@link RedisSerializer} using java serialization with the given {@link ClassLoader}.<br />
+     * <strong>Note:</strong> Ensure that your domain objects are actually {@link java.io.Serializable serializable}.
+     *
+     * @param classLoader the {@link ClassLoader} to use for deserialization. Can be {@literal null}.
+     * @return new instance of {@link RedisSerializer}. Never {@literal null}.
+     * @since 2.1
+     */
+    static RedisSerializer<Object> java(@Nullable ClassLoader classLoader) {
+        return new JdkSerializationRedisSerializer(classLoader);
+    }
 
-	/**
-	 * Obtain a {@link RedisSerializer} that can read and write JSON using
-	 * <a href="https://github.com/FasterXML/jackson-core">Jackson</a>.
-	 *
-	 * @return never {@literal null}.
-	 * @since 2.1
-	 */
-	static RedisSerializer<Object> json() {
-		return new GenericJackson2JsonRedisSerializer();
-	}
+    /**
+     * Obtain a {@link RedisSerializer} that can read and write JSON using
+     * <a href="https://github.com/FasterXML/jackson-core">Jackson</a>.
+     *
+     * @return never {@literal null}.
+     * @since 2.1
+     */
+    static RedisSerializer<Object> json() {
+        return new GenericJackson2JsonRedisSerializer();
+    }
 
-	/**
-	 * Obtain a simple {@link java.lang.String} to {@literal byte[]} (and back) serializer using
-	 * {@link java.nio.charset.StandardCharsets#UTF_8 UTF-8} as the default {@link java.nio.charset.Charset}.
-	 *
-	 * @return never {@literal null}.
-	 * @since 2.1
-	 */
-	static RedisSerializer<String> string() {
-		return StringRedisSerializer.UTF_8;
-	}
+    /**
+     * Obtain a simple {@link java.lang.String} to {@literal byte[]} (and back) serializer using
+     * {@link java.nio.charset.StandardCharsets#UTF_8 UTF-8} as the default {@link java.nio.charset.Charset}.
+     *
+     * @return never {@literal null}.
+     * @since 2.1
+     */
+    static RedisSerializer<String> string() {
+        return StringRedisSerializer.UTF_8;
+    }
 
-	/**
-	 * Obtain a {@link RedisSerializer} that passes thru {@code byte[]}.
-	 *
-	 * @return never {@literal null}.
-	 * @since 2.2
-	 */
-	static RedisSerializer<byte[]> byteArray() {
-		return ByteArrayRedisSerializer.INSTANCE;
-	}
+    /**
+     * Obtain a {@link RedisSerializer} that passes thru {@code byte[]}.
+     *
+     * @return never {@literal null}.
+     * @since 2.2
+     */
+    static RedisSerializer<byte[]> byteArray() {
+        return ByteArrayRedisSerializer.INSTANCE;
+    }
 
-	default boolean canSerialize(Class<?> type) {
-		return ClassUtils.isAssignable(getTargetType(), type);
-	}
+    default boolean canSerialize(Class<?> type) {
+        return ClassUtils.isAssignable(getTargetType(), type);
+    }
 
-	default Class<?> getTargetType() {
-		return Object.class;
-	}
+    default Class<?> getTargetType() {
+        return Object.class;
+    }
+
 }
